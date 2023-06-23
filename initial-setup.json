@@ -1,4 +1,4 @@
 {
     "service_name": "YP",
-    "resource_name": "phonebook"
+    "phonebook_name": "phonebook"
 }
