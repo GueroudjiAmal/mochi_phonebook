@@ -34,11 +34,11 @@ int main(int argc, char** argv) {
         YP::PhonebookHandle phonebook =
             client.makePhonebookHandle(g_address, g_provider_id,
                     YP::UUID::from_string(g_phonebook.c_str()));
+        uint32_t ins = 99;
+        phonebook.insert("amal", 4040, &ins);
 
-        phonebook.sayHello();
-
-        int32_t result;
-        phonebook.computeSum(32, 54, &result);
+        uint64_t num = 4040;
+        phonebook.lookup("amal", &num);
 
     } catch(const YP::Exception& ex) {
         std::cerr << ex.what() << std::endl;
