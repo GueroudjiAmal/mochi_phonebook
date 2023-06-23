@@ -71,26 +71,36 @@ class PhonebookHandle {
      * @brief Checks if the PhonebookHandle instance is valid.
      */
     operator bool() const;
-
+    
     /**
-     * @brief Sends an RPC to the phonebook to make it print a hello message.
-     */
-    void sayHello() const;
-
-    /**
-     * @brief Requests the target phonebook to compute the sum of two numbers.
+     * @brief Requests the target phonebook to insert a new entry.
      * If result is null, it will be ignored. If req is not null, this call
      * will be non-blocking and the caller is responsible for waiting on
      * the request.
      *
-     * @param[in] x first integer
-     * @param[in] y second integer
-     * @param[out] result result
+     * @param[in] name name of the caller
+     * @param[in] number number of the caller
+     * @param[out] result 0 if inserted 99 else
      * @param[out] req request for a non-blocking operation
      */
-    void computeSum(int32_t x, int32_t y,
-                    int32_t* result = nullptr,
-                    AsyncRequest* req = nullptr) const;
+    void insert(std::string name, uint64_t number,
+                    uint32_t* result = nullptr,
+                    AsyncRequest* req = nullptr);
+
+    /**
+     * @brief Requests the target phonebook to lookup for a name and returns the number.
+     * If result is null, it will be ignored. If req is not null, this call
+     * will be non-blocking and the caller is responsible for waiting on
+     * the request.
+     *
+     * @param[in] name name of the caller
+     * @param[out] result number of the caller
+     * @param[out] req request for a non-blocking operation
+     */
+    void lookup(std::string name,
+                    uint64_t* result = nullptr,
+                    AsyncRequest* req = nullptr) const;    
+
 
     private:
 

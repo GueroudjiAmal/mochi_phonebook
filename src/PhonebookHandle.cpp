@@ -39,32 +39,58 @@ Client PhonebookHandle::client() const {
     return Client(self->m_client);
 }
 
-void PhonebookHandle::sayHello() const {
-    if(not self) throw Exception("Invalid YP::PhonebookHandle object");
-    auto& rpc = self->m_client->m_say_hello;
-    auto& ph  = self->m_ph;
-    auto& phonebook_id = self->m_phonebook_id;
-    rpc.on(ph)(phonebook_id);
-}
-
-void PhonebookHandle::computeSum(
-        int32_t x, int32_t y,
-        int32_t* result,
-        AsyncRequest* req) const
+void PhonebookHandle::insert(
+        std::string name, uint64_t number,
+        uint32_t* result,
+        AsyncRequest* req)
 {
     if(not self) throw Exception("Invalid YP::PhonebookHandle object");
-    auto& rpc = self->m_client->m_compute_sum;
+    auto& rpc = self->m_client->m_insert;
     auto& ph  = self->m_ph;
     auto& phonebook_id = self->m_phonebook_id;
     if(req == nullptr) { // synchronous call
-        RequestResult<int32_t> response = rpc.on(ph)(phonebook_id, x, y);
+        RequestResult<int32_t> response = rpc.on(ph)(phonebook_id, name, number);
         if(response.success()) {
             if(result) *result = response.value();
         } else {
             throw Exception(response.error());
         }
     } else { // asynchronous call
-        auto async_response = rpc.on(ph).async(phonebook_id, x, y);
+        auto async_response = rpc.on(ph).async(phonebook_id, name, number);
+        auto async_request_impl =
+            std::make_shared<AsyncRequestImpl>(std::move(async_response));
+        async_request_impl->m_wait_callback =
+            [result](AsyncRequestImpl& async_request_impl) {
+                RequestResult<int32_t> response =
+                    async_request_impl.m_async_response.wait();
+                    if(response.success()) {
+                        if(result) *result = response.value();
+                    } else {
+                        throw Exception(response.error());
+                    }
+            };
+        *req = AsyncRequest(std::move(async_request_impl));
+    }
+}
+
+void PhonebookHandle::lookup(
+        std::string name, 
+        uint64_t* result,
+        AsyncRequest* req) const
+{
+    if(not self) throw Exception("Invalid YP::PhonebookHandle object");
+    auto& rpc = self->m_client->m_lookup;
+    auto& ph  = self->m_ph;
+    auto& phonebook_id = self->m_phonebook_id;
+    if(req == nullptr) { // synchronous call
+        RequestResult<int32_t> response = rpc.on(ph)(phonebook_id, name);
+        if(response.success()) {
+            if(result) *result = response.value();
+        } else {
+            throw Exception(response.error());
+        }
+    } else { // asynchronous call
+        auto async_response = rpc.on(ph).async(phonebook_id, name);
         auto async_request_impl =
             std::make_shared<AsyncRequestImpl>(std::move(async_response));
         async_request_impl->m_wait_callback =

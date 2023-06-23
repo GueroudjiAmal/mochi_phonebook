@@ -14,19 +14,25 @@ DummyPhonebook::DummyPhonebook(thallium::engine engine, const json& config)
 
 }
 
-void DummyPhonebook::sayHello() {
-    std::cout << "Hello World" << std::endl;
-}
-
 std::string DummyPhonebook::getConfig() const {
     return m_config.dump();
 }
 
-YP::RequestResult<int32_t> DummyPhonebook::computeSum(int32_t x, int32_t y) {
-    YP::RequestResult<int32_t> result;
-    result.value() = x + y;
+
+YP::RequestResult<uint32_t> DummyPhonebook::insert(std::string name, uint64_t number) {
+    YP::RequestResult<uint32_t> result;
+    m_content.emplace(std::move(name), number);
+    result.value() = 0;
     return result;
 }
+
+YP::RequestResult<uint64_t> DummyPhonebook::lookup(std::string name) {
+    YP::RequestResult<uint64_t> result;
+    auto it = m_content.find(name);
+    result.value()= (it == m_content.end()) ? 0 : it->second;
+    return result;
+}
+
 
 YP::RequestResult<bool> DummyPhonebook::destroy() {
     YP::RequestResult<bool> result;

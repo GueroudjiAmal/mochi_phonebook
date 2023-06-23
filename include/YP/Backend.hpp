@@ -85,19 +85,23 @@ class Backend {
     virtual std::string getConfig() const = 0;
 
     /**
-     * @brief Prints Hello World.
+     * @brief Insert a new entry to the phonebook.
+     *
+     * @param name na;e of the persone
+     * @param number number of the person 
+     *
+     * @return a RequestResult containing 0 if inseted correcty 99 else.
      */
-    virtual void sayHello() = 0;
+    virtual RequestResult<uint32_t> insert(std::string name, uint64_t number) = 0;
 
-    /**
-     * @brief Compute the sum of two integers.
+        /**
+     * @brief Lookup for an associated number with a name in the phonebook.
      *
-     * @param x first integer
-     * @param y second integer
+     * @param name name of the persone
      *
-     * @return a RequestResult containing the result.
+     * @return a RequestResult number associated with the name.
      */
-    virtual RequestResult<int32_t> computeSum(int32_t x, int32_t y) = 0;
+    virtual RequestResult<uint64_t> lookup(std::string name) = 0;
 
     /**
      * @brief Destroys the underlying phonebook.

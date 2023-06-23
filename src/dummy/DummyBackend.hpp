@@ -17,6 +17,7 @@ class DummyPhonebook : public YP::Backend {
 
     thallium::engine m_engine;
     json             m_config;
+    std::unordered_map<std::string,uint64_t> m_content;
 
     public:
 
@@ -56,19 +57,24 @@ class DummyPhonebook : public YP::Backend {
     std::string getConfig() const override;
 
     /**
-     * @brief Prints Hello World.
+     * @brief Inserts a new entry to the phonebook.
+     *
+     * @param name the name
+     * @param number the number
+     *
+     * @return a RequestResult containing 0 if the inserssion is done.
      */
-    void sayHello() override;
+    YP::RequestResult<uint32_t> insert(std::string name, uint64_t number) override;
 
     /**
-     * @brief Compute the sum of two integers.
+     * @brief lookup for a number in the phonebook.
      *
-     * @param x first integer
-     * @param y second integer
+     * @param name the name
      *
-     * @return a RequestResult containing the result.
+     * @return a RequestResult containing the number if found 99 else.
      */
-    YP::RequestResult<int32_t> computeSum(int32_t x, int32_t y) override;
+    YP::RequestResult<uint64_t> lookup(std::string name) override;
+
 
     /**
      * @brief Destroys the underlying phonebook.
